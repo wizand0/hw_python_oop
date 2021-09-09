@@ -65,21 +65,24 @@ class CashCalculator(Calculator):
                     return f'На сегодня осталось {cash_remained} USD'
                 else:
                     cash_remained = abs(cash_remained)
-                    return f'Денег нет, держись: твой долг - {cash_remained} USD'
+                    return ('Денег нет, держись: твой долг '
+                            f'- {cash_remained} USD')
             elif currency == 'Euro' or currency == 'euro' or currency == 'eur':
                 cash_remained = round(cash_remained / self.EURO_RATE, 2)
                 if cash_remained > 0.00:
                     return f'На сегодня осталось {cash_remained} Euro'
                 else:
                     cash_remained = abs(cash_remained)
-                    return f'Денег нет, держись: твой долг - {cash_remained} Euro'
-            
+                    return ('Денег нет, держись: твой долг '
+                            f'- {cash_remained} Euro')
+
             elif currency == 'Rub' or currency == 'rub' or currency == 'руб':
                 cash_remained = round(cash_remained, 2)
                 if cash_remained > 0:
                     return f'На сегодня осталось {cash_remained} руб'
                 else:
                     cash_remained = abs(cash_remained)
-                    return f'Денег нет, держись: твой долг - {cash_remained} руб'
+                    return ('Денег нет, держись: твой долг '
+                            f'- {cash_remained} руб')
             else:
                 return 'Ошибка в выборе валюты'
