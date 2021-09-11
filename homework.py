@@ -23,9 +23,12 @@ class Calculator:
         week_ago = today - delta
         stats = 0
         for rec in self.records:
-            if rec.date <= today and rec.date >= week_ago:
+            if week_ago >= rec.date <= today:
                 stats += rec.amount
         return stats
+
+    def get_remained(self):
+        return self.limit - self.get_today_stats
 
 
 class Record:
@@ -41,7 +44,7 @@ class Record:
 class CaloriesCalculator(Calculator):
 
     def get_calories_remained(self):
-        calories_remained = int(self.limit - self.get_today_stats())
+        calories_remained = int(self.get_remained)
         if calories_remained > 0:
             return ('Сегодня можно съесть что-нибудь ещё, но с '
                     f'общей калорийностью не более {calories_remained} кКал')
@@ -53,36 +56,22 @@ class CashCalculator(Calculator):
 
     USD_RATE = 74.74
     EURO_RATE = 88.09
+    RUB_RATE = 1.0
 
     def get_today_cash_remained(self, currency):
-        cash_remained = round(float(self.limit - self.get_today_stats()), 2)
+        cash_remained = round(float(self.get_remained), 2)
         if cash_remained == 0:
             return 'Денег нет, держись'
+        money_dict = {'usd': ('USD', self.USD_RATE),
+                      'eur': ('Euro', self.EURO_RATE),
+                      'rub': ('руб', self.RUB_RATE)
+                      }
+        if currency not in money_dict:
+            return 'Введите правильную валюту'
+        name, rate = money_dict.get(currency)
+        cash_remained = round(cash_remained / rate, 2)
+        if cash_remained > 0.00:
+            return f'На сегодня осталось {cash_remained} name'
         else:
-            if currency == 'USD' or currency == 'usd' or currency == 'Usd':
-                cash_remained = round(cash_remained / self.USD_RATE, 2)
-                if cash_remained > 0.00:
-                    return f'На сегодня осталось {cash_remained} USD'
-                else:
-                    cash_remained = abs(cash_remained)
-                    return ('Денег нет, держись: твой долг '
-                            f'- {cash_remained} USD')
-            elif currency == 'Euro' or currency == 'euro' or currency == 'eur':
-                cash_remained = round(cash_remained / self.EURO_RATE, 2)
-                if cash_remained > 0.00:
-                    return f'На сегодня осталось {cash_remained} Euro'
-                else:
-                    cash_remained = abs(cash_remained)
-                    return ('Денег нет, держись: твой долг '
-                            f'- {cash_remained} Euro')
-
-            elif currency == 'Rub' or currency == 'rub' or currency == 'руб':
-                cash_remained = round(cash_remained, 2)
-                if cash_remained > 0:
-                    return f'На сегодня осталось {cash_remained} руб'
-                else:
-                    cash_remained = abs(cash_remained)
-                    return ('Денег нет, держись: твой долг '
-                            f'- {cash_remained} руб')
-            else:
-                return 'Ошибка в выборе валюты'
+            return ('Денег нет, держись: твой долг '
+                    f'- {cash_remained} {name}')
