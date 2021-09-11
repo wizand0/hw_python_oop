@@ -11,21 +11,15 @@ class Calculator:
 
     def get_today_stats(self):
         today = dt.date.today()
-        stats = 0
-        for rec in self.records:
-            if rec.date == today:
-                stats += rec.amount
-        return stats
+        return sum(rec.amount for rec in self.records
+                   if rec.date == today)
 
     def get_week_stats(self):
         today = dt.date.today()
         delta = dt.timedelta(weeks=1)
         week_ago = today - delta
-        stats = 0
-        for rec in self.records:
-            if week_ago <= rec.date <= today:
-                stats += rec.amount
-        return stats
+        return sum(rec.amount for rec in self.records
+                   if week_ago <= rec.date <= today)
 
     def get_remained(self):
         return self.limit - self.get_today_stats()
